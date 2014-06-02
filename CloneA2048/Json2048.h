@@ -17,6 +17,7 @@
 // Game flow and rules
 - (void)json2048:(Json2048 *)json2048 didChangeScore:(NSUInteger)score;
 - (void)json2048GameOver:(Json2048 *)json2048;
+- (void)json2048Reached2048:(Json2048 *)json2048;
 
 // Changed to the board
 - (void)json2048:(Json2048 *)json2048 spawnedAtPos:(CGPoint)pos;

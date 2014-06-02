@@ -21,10 +21,15 @@
 @property (nonatomic, weak) IBOutlet UILabel *titleLabel;
 @end
 
+static int kGameOverlayLabelTag = 12;
+static int kGameOverlayButtonTag = 13;
+
 @implementation ViewController {
     Json2048 *_game;
     NSUInteger _bestScore;
     NSTimer *_testTimer;
+    
+    UIView *_messageOverlayView;
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -46,6 +51,11 @@
     NSNumber *lastGameScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"k2048CurrentScore"];
     
 	_game = [[Json2048 alloc] initWithJson:[[NSUserDefaults standardUserDefaults] objectForKey:@"k2048CloneJson"] score:lastGameScore ? [lastGameScore unsignedIntegerValue] : 0];
+    _game = [[Json2048 alloc] initWithJson:@[[@[@0,@0,@0,@0] mutableCopy],
+                                            [@[@1024,@0,@0,@0] mutableCopy],
+                                            [@[@0,@0,@0,@0] mutableCopy],
+                                             [@[@1024,@0,@0,@0] mutableCopy]] score:0];
+    
     _board.size = [_game.json.firstObject count];
     
     [_board updateValuesWithValueArray:_game.json canSpawn:YES];
@@ -64,17 +74,20 @@
 #pragma mark - User interaction
 
 - (void)newGameButtonTapped:(id)sender {
-    [((UIButton*)sender) removeFromSuperview];
-    [_board removeGameOverOverlay];
+    [self _removeOverlay];
     [self resetGame:sender];
     if (_testTimer) {
         [self _autoMove];
     }
 }
 
+- (void)continuePlayingButtonTapped:(id)sender {
+    [self _removeOverlay];
+}
+
 - (IBAction)resetGame:(id)sender {
     [_game reset];
-    [_board removeGameOverOverlay];
+    [self _removeOverlay];
 }
 
 - (IBAction)toggleAuto:(id)sender {
@@ -94,18 +107,60 @@
 }
 
 - (void)json2048GameOver:(Json2048 *)json2048 {
-    [_board displayGameOverOverlayWithText:@"Game Over\n:("];
-    UIButton *newGameButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [newGameButton addTarget:self action:@selector(newGameButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-    newGameButton.frame = _board.frame;
-    [self.view addSubview:newGameButton];
+    [self _displayMessageWithText:@"Game over!\nTap to try again" tapSelector:@selector(newGameButtonTapped:)];
+}
+
+- (void)json2048Reached2048:(Json2048 *)json2048 {
+    [self _displayMessageWithText:@"You won!\nTap to continue playing" tapSelector:@selector(continuePlayingButtonTapped:)];
+}
+
+- (void)_displayMessageWithText:(NSString *)text tapSelector:(SEL)selector {
+    if (!_messageOverlayView) {
+        _messageOverlayView = [[UIView alloc] initWithFrame:_board.frame];
+        _messageOverlayView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.5f];
+        UILabel *gameOverLabel = [[UILabel alloc] initWithFrame:_messageOverlayView.bounds];
+        gameOverLabel.tag = kGameOverlayLabelTag;
+        gameOverLabel.textAlignment = NSTextAlignmentCenter;
+        gameOverLabel.font = [UIFont boldSystemFontOfSize:30];
+        gameOverLabel.numberOfLines = 2;
+        [_messageOverlayView addSubview:gameOverLabel];
+    }
+    
+    if ([_messageOverlayView viewWithTag:kGameOverlayButtonTag]) {
+        [[_messageOverlayView viewWithTag:kGameOverlayButtonTag] removeFromSuperview];
+    }
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button addTarget:self action:selector forControlEvents:UIControlEventTouchUpInside];
+    button.tag = kGameOverlayButtonTag;
+    button.frame = _messageOverlayView.bounds;
+    [_messageOverlayView addSubview:button];
+    
+    if (!_messageOverlayView.superview) {
+        [self.view addSubview:_messageOverlayView];
+        _messageOverlayView.alpha = 0;
+        
+        [UIView animateWithDuration:0.2f animations:^{
+            _messageOverlayView.alpha = 1;
+        }];
+    }
+    
+    ((UILabel *)[_messageOverlayView viewWithTag:kGameOverlayLabelTag]).text = text;
     
     if (_testTimer) {
         [_testTimer invalidate];
         /*dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self newGameButtonTapped:newGameButton];
-        });*/
+         [self newGameButtonTapped:newGameButton];
+         });*/
     }
+}
+
+- (void)_removeOverlay {
+    [UIView animateWithDuration:0.1f animations:^{
+        _messageOverlayView.alpha = 0;
+    } completion:^(BOOL finished) {
+        [_messageOverlayView removeFromSuperview];
+    }];
 }
 
 - (void)json2048:(Json2048 *)json2048 didChangeScore:(NSUInteger)score {

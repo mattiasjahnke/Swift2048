@@ -17,7 +17,7 @@ typedef BOOL(^ConditionBlock)(NSInteger var);
     NSUInteger _score;
     NSUInteger _totalMoves;
     
-    BOOL _gameIsDead;
+    BOOL _gameIsWon;
 }
 
 #pragma mark - Init
@@ -131,6 +131,11 @@ typedef BOOL(^ConditionBlock)(NSInteger var);
                     // Merge
                     _json[i][j] = @0;
                     _json[i + nextIDiff][j + nextJDiff] = @(nextTileValue * 2);
+                    
+                    if (!_gameIsWon && nextTileValue * 2 == 2048 && [_delegate respondsToSelector:@selector(json2048Reached2048:)]) {
+                        _gameIsWon = YES;
+                        [_delegate json2048Reached2048:self];
+                    }
                     
                     [merges addObject:@[@(i + nextIDiff), @(j + nextJDiff)]];
                     

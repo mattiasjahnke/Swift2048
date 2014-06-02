@@ -14,9 +14,6 @@
 
 @property (nonatomic, assign) NSUInteger size;
 
-- (void)displayGameOverOverlayWithText:(NSString *)text;
-- (void)removeGameOverOverlay;
-
 // *** Tile control
 - (GameTileView *)spawnTileAtPosition:(CGPoint)position;
 - (void)moveTileAtPosition:(CGPoint)fromPosition toPosition:(CGPoint)toPosition;

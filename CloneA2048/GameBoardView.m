@@ -12,11 +12,8 @@
 #define CONTENT_INSET 10
 #define TILE_CORNER_RADIUS 5
 
-static int kGameOverOverlayLabelTag = 12;
-
 @implementation GameBoardView {
     NSMutableArray *_tiles, *_placeholderLayers;
-    UIView *_overlay;
 }
 
 #pragma mark - Init
@@ -47,39 +44,6 @@ static int kGameOverOverlayLabelTag = 12;
 - (void)setSize:(NSUInteger)size {
     _size = size;
     [self _updatePlaceholderLayers];
-}
-
-// TODO: This view is flashing when game is over and player swipes board
-- (void)displayGameOverOverlayWithText:(NSString *)text {
-    if (!_overlay) {
-        _overlay = [[UIView alloc] initWithFrame:self.bounds];
-        _overlay.backgroundColor = [UIColor colorWithWhite:1 alpha:0.5f];
-        UILabel *gameOverLabel = [[UILabel alloc] initWithFrame:_overlay.bounds];
-        gameOverLabel.tag = kGameOverOverlayLabelTag;
-        gameOverLabel.textAlignment = NSTextAlignmentCenter;
-        gameOverLabel.font = [UIFont boldSystemFontOfSize:30];
-        gameOverLabel.numberOfLines = 2;
-        [_overlay addSubview:gameOverLabel];
-    }
-    if (!_overlay.superview) {
-        [self addSubview:_overlay];
-        
-        _overlay.alpha = 0;
-        
-        [UIView animateWithDuration:0.2f animations:^{
-            _overlay.alpha = 1;
-        }];
-    }
-    
-    ((UILabel *)[_overlay viewWithTag:kGameOverOverlayLabelTag]).text = text;
-}
-
-- (void)removeGameOverOverlay {
-    [UIView animateWithDuration:0.1f animations:^{
-        _overlay.alpha = 0;
-    } completion:^(BOOL finished) {
-        [_overlay removeFromSuperview];
-    }];
 }
 
 - (GameTileView *)spawnTileAtPosition:(CGPoint)position {
