@@ -51,10 +51,18 @@ static int kGameOverlayButtonTag = 13;
     NSNumber *lastGameScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"k2048CurrentScore"];
     
 	_game = [[Json2048 alloc] initWithJson:[[NSUserDefaults standardUserDefaults] objectForKey:@"k2048CloneJson"] score:lastGameScore ? [lastGameScore unsignedIntegerValue] : 0];
+    /*
+    // Winning game
     _game = [[Json2048 alloc] initWithJson:@[[@[@0,@0,@0,@0] mutableCopy],
                                             [@[@1024,@0,@0,@0] mutableCopy],
                                             [@[@0,@0,@0,@0] mutableCopy],
                                              [@[@1024,@0,@0,@0] mutableCopy]] score:0];
+    
+    // Losing game
+    _game = [[Json2048 alloc] initWithJson:@[[@[@1,@2,@3,@4] mutableCopy],
+                                             [@[@5,@6,@7,@8] mutableCopy],
+                                             [@[@9,@10,@11,@12] mutableCopy],
+                                             [@[@13,@14,@15,@0] mutableCopy]] score:0];*/
     
     _board.size = [_game.json.firstObject count];
     
@@ -107,14 +115,18 @@ static int kGameOverlayButtonTag = 13;
 }
 
 - (void)json2048GameOver:(Json2048 *)json2048 {
-    [self _displayMessageWithText:@"Game over!\nTap to try again" tapSelector:@selector(newGameButtonTapped:)];
+    [self _displayMessageWithTitle:@"Game over!" subtitle:@"Tap to try again" tapSelector:@selector(newGameButtonTapped:)];
 }
 
 - (void)json2048Reached2048:(Json2048 *)json2048 {
-    [self _displayMessageWithText:@"You won!\nTap to continue playing" tapSelector:@selector(continuePlayingButtonTapped:)];
+    [self _displayMessageWithTitle:@"You won!" subtitle:@"Tap to continue playing" tapSelector:@selector(continuePlayingButtonTapped:)];
 }
 
-- (void)_displayMessageWithText:(NSString *)text tapSelector:(SEL)selector {
+- (void)_displayMessageWithTitle:(NSString *)title subtitle:(NSString *)subtitle tapSelector:(SEL)selector {
+    NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@\n", title] attributes:@{NSFontAttributeName : [UIFont boldSystemFontOfSize:36]}];
+    [str appendAttributedString:[[NSAttributedString alloc] initWithString:subtitle attributes:@{NSFontAttributeName : [UIFont boldSystemFontOfSize:16], NSForegroundColorAttributeName : [UIColor colorWithWhite:0 alpha:0.3f]}]];
+    
+    
     if (!_messageOverlayView) {
         _messageOverlayView = [[UIView alloc] initWithFrame:_board.frame];
         _messageOverlayView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.5f];
@@ -145,7 +157,7 @@ static int kGameOverlayButtonTag = 13;
         }];
     }
     
-    ((UILabel *)[_messageOverlayView viewWithTag:kGameOverlayLabelTag]).text = text;
+    ((UILabel *)[_messageOverlayView viewWithTag:kGameOverlayLabelTag]).attributedText = str;
     
     if (_testTimer) {
         [_testTimer invalidate];
