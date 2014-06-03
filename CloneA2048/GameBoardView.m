@@ -75,15 +75,12 @@
     [self moveTileAtPosition:fromPosition toPosition:toPosition];
     
     // "Pop" the merged tile
-    
-    
     assert(toTile);
     [UIView animateWithDuration:.1f animations:^{
         toTile.transform = CGAffineTransformMakeScale(1.2, 1.2);
     } completion:^(BOOL finished) {
         [UIView animateWithDuration:.1f animations:^{
             toTile.transform = CGAffineTransformIdentity;
-            
         }];
     }];
    
@@ -96,7 +93,6 @@
             CGRect dest = [self _frameForPosition:tile.position];
             tile.bounds = CGRectMake(0,0,dest.size.width, dest.size.height);
             tile.layer.position = CGPointMake(dest.origin.x + tile.bounds.size.width / 2, dest.origin.y + tile.bounds.size.height / 2);
-            //tile.frame = [self _frameForPosition:tile.position];
             if (tile.destory) {
                 tile.alpha = 0;
             }

@@ -159,12 +159,8 @@ static int kGameOverlayButtonTag = 13;
     
     ((UILabel *)[_messageOverlayView viewWithTag:kGameOverlayLabelTag]).attributedText = str;
     
-    if (_testTimer) {
-        [_testTimer invalidate];
-        /*dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-         [self newGameButtonTapped:newGameButton];
-         });*/
-    }
+    [_testTimer invalidate];
+    _testTimer = nil;
 }
 
 - (void)_removeOverlay {
