@@ -126,6 +126,12 @@
 
 #pragma mark - Internal
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    [self _updatePlaceholderLayers];
+    [self animateTiles];
+}
+
 - (CGRect)_frameForPosition:(CGPoint)position {
     CGFloat min = MIN(self.frame.size.width, self.frame.size.height) - CONTENT_INSET * 2;
     CGFloat s = roundf(min / _size);
