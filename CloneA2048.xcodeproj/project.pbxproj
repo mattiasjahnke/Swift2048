@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD4C0A61197FEAC900A03A4B /* default-color.json in Resources */ = {isa = PBXBuildFile; fileRef = CD4C0A60197FEAC900A03A4B /* default-color.json */; };
 		CD5CC24319337A0200B1A95D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD5CC24219337A0200B1A95D /* Foundation.framework */; };
 		CD5CC24519337A0200B1A95D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD5CC24419337A0200B1A95D /* CoreGraphics.framework */; };
 		CD5CC24719337A0200B1A95D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD5CC24619337A0200B1A95D /* UIKit.framework */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CD4C0A60197FEAC900A03A4B /* default-color.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "default-color.json"; sourceTree = "<group>"; };
 		CD5CC23F19337A0200B1A95D /* CloneA2048.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CloneA2048.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD5CC24219337A0200B1A95D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CD5CC24419337A0200B1A95D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -88,6 +90,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CD4C0A5F197FEAAB00A03A4B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CD4C0A60197FEAC900A03A4B /* default-color.json */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		CD5CC23619337A0200B1A95D = {
 			isa = PBXGroup;
 			children = (
@@ -161,6 +171,7 @@
 		CD5CC2B11934D66B00B1A95D /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				CD4C0A5F197FEAAB00A03A4B /* Resources */,
 				CD5CC2B31934D6AC00B1A95D /* Model */,
 				CD5CC2B21934D69C00B1A95D /* View */,
 				CD5CC2FF19387B2800B1A95D /* Controller */,
@@ -294,6 +305,7 @@
 				CD5CC25B19337A0200B1A95D /* Images.xcassets in Resources */,
 				CD5CC24D19337A0200B1A95D /* InfoPlist.strings in Resources */,
 				CD5CC25619337A0200B1A95D /* Main.storyboard in Resources */,
+				CD4C0A61197FEAC900A03A4B /* default-color.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

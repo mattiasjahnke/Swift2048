@@ -14,6 +14,7 @@
 
 @implementation GameBoardView {
     NSMutableArray *_tiles, *_placeholderLayers;
+    NSDictionary *_colorScheme;
 }
 
 #pragma mark - Init
@@ -21,6 +22,8 @@
 - (void)_sharedInit {
     _tiles = [NSMutableArray array];
     _placeholderLayers = [NSMutableArray array];
+
+    _colorScheme = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"default-color" ofType:@"json"]] options:0 error:nil];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -51,6 +54,7 @@
     [_tiles addObject:tile];
     [self addSubview:_tiles.lastObject];
     
+    tile.colorScheme = _colorScheme;
     tile.position = position;
     tile.cornerRadius = TILE_CORNER_RADIUS;
     tile.frame = [self _frameForPosition:position];

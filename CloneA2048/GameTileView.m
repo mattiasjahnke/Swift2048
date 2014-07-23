@@ -8,8 +8,6 @@
 
 #import "GameTileView.h"
 
-#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
-
 @implementation GameTileView {
     UILabel *_valueLabel;
 }
@@ -58,28 +56,22 @@
     _value = value;
     if (!_valueHidden)
         _valueLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)value];
-    _valueLabel.backgroundColor = [self _tileColorForValue:@(value)];
-    _valueLabel.textColor = [self _textColorForValue:@(value)];
+    
+    NSString *stringValue = value <= 2048 ? [NSString stringWithFormat:@"%d", value] : @"super";
+    _valueLabel.backgroundColor = [self _colorForValue:stringValue forKey:@"background"];
+    _valueLabel.textColor = [self _colorForValue:stringValue forKey:@"text"];
 }
 
-- (UIColor *)_tileColorForValue:(NSNumber *)value {
-    NSNumber *hex = @{@(2):@(0xEEE4DA),
-                      @(4):@(0xEAE0C8),
-                      @(8):@(0xF59563),
-                      @(16):@(0x3399ff),
-                      @(32):@(0xffa333),
-                      @(64):@(0xcef030),
-                      @(128):@(0xE8D8CE),
-                      @(256):@(0x990303),
-                      @(512):@(0x6BA5DE),
-                      @(1024):@(0xDCAD60),
-                      @(2048):@(0xB60022)}[value];
-    return hex ? UIColorFromRGB([hex integerValue]) : UIColorFromRGB(0xF59563);
-}
-
-- (UIColor *)_textColorForValue:(NSNumber *)value {
-    NSNumber *hex = @{@(2):@(0x776E64)}[value];
-    return hex ? UIColorFromRGB([hex integerValue]) : UIColorFromRGB(0x776E64);
+- (UIColor *)_colorForValue:(NSString *)value forKey:(NSString *)key {
+    unsigned result = 0;
+    if (_colorScheme[value][key]) {
+        NSScanner *scanner = [NSScanner scannerWithString:_colorScheme[value][key]];
+        [scanner scanHexInt:&result];
+    } else {
+        NSScanner *scanner = [NSScanner scannerWithString:_colorScheme[@"default"][key]];
+        [scanner scanHexInt:&result];
+    }
+    return UIColorFromRGB(result);
 }
 
 @end

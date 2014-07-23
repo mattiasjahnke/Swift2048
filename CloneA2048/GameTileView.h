@@ -15,5 +15,6 @@
 @property (nonatomic, assign) NSUInteger value;
 @property (nonatomic, assign) CGFloat cornerRadius;
 @property (nonatomic, assign) BOOL valueHidden;
+@property (nonatomic, strong) NSDictionary *colorScheme;
 
 @end

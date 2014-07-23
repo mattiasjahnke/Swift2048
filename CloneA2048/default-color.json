@@ -1,0 +1,50 @@
+{
+    "2": {},
+    "4": {
+        "background": "0xede0c8"
+    },
+    "8": {
+        "background": "0xf2b179",
+        "text": "0xf9f6f2"
+    },
+    "16": {
+        "background": "0xf59563",
+        "text": "0xf9f6f2"
+    },
+    "32": {
+        "background": "0xf67c5f",
+        "text": "0xf9f6f2"
+    },
+    "64": {
+        "background": "0xedcf72",
+        "text": "0xf9f6f2"
+    },
+    "128": {
+        "background": "0xedcf72",
+        "text": "0xf9f6f2"
+    },
+    "256": {
+        "background": "0xedcc61",
+        "text": "0xf9f6f2"
+    },
+    "512": {
+        "background": "0xedc850",
+        "text": "0xf9f6f2"
+    },
+    "1024": {
+        "background": "0xedc53f",
+        "text": "0xf9f6f2"
+    },
+    "2048": {
+        "background": "0xedc22e",
+        "text": "0xf9f6f2"
+    },
+    "super": {
+        "background": "0x3c3a32",
+        "text": "0xf9f6f2"
+    },
+    "default": {
+        "text": "0x776e65",
+        "background": "0xeee4da"
+    }
+}
