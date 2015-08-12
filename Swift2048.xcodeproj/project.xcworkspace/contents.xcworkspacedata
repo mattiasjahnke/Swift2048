@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:CloneA2048.xcodeproj">
+      location = "self:Swift2048.xcodeproj">
    </FileRef>
 </Workspace>
