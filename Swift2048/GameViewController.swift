@@ -27,6 +27,7 @@ class GameViewController: UIViewController {
     private var autoTimer: NSTimer?
     private var presentedMessages = [UIButton]()
     private var swipeStart: CGPoint?
+    private var lastMove = 0  // TODO: Implement a more elegant solution
     
     required init?(coder aDecoder: NSCoder) {
         if let persisted = NSUserDefaults.standardUserDefaults().objectForKey(kPersistedModelKey) as? [Int] {
@@ -120,6 +121,7 @@ extension GameViewController {
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first {
             swipeStart = touch.locationInView(view)
+            lastMove = 0
         }
     }
     
@@ -135,14 +137,18 @@ extension GameViewController {
             return sensitivity >= 0 ? a > delta : a < delta
         }
         
-        if diff.x > 0 && evaluateDirection(diff.x, diff.y, treshold) {
+        if diff.x > 0 && evaluateDirection(diff.x, diff.y, treshold) && lastMove != 1 {
             game.swipeRight()
-        } else if diff.x < 0 && evaluateDirection(diff.x, diff.y, -treshold) {
+            lastMove = 1
+        } else if diff.x < 0 && evaluateDirection(diff.x, diff.y, -treshold) && lastMove != 2 {
             game.swipeLeft()
-        } else if diff.y > 0 && evaluateDirection(diff.y, diff.x, treshold) {
+            lastMove = 2
+        } else if diff.y > 0 && evaluateDirection(diff.y, diff.x, treshold) && lastMove != 3 {
             game.swipeDown()
-        } else if diff.y < 0 && evaluateDirection(diff.y, diff.x, -treshold) {
+            lastMove = 3
+        } else if diff.y < 0 && evaluateDirection(diff.y, diff.x, -treshold) && lastMove != 4 {
             game.swipeUp()
+            lastMove = 4
         }
         
         self.swipeStart = loc
