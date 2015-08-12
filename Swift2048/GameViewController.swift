@@ -22,10 +22,11 @@ class GameViewController: UIViewController {
     @IBOutlet weak var resetButton: UIButton!
     @IBOutlet weak var autoRunButton: UIButton!
     
-    let game: Game2048
-    var bestScore = 0
-    var autoTimer: NSTimer?
-    var presentedMessages = [UIButton]()
+    private let game: Game2048
+    private var bestScore = 0
+    private var autoTimer: NSTimer?
+    private var presentedMessages = [UIButton]()
+    private var swipeStart: CGPoint?
     
     required init?(coder aDecoder: NSCoder) {
         if let persisted = NSUserDefaults.standardUserDefaults().objectForKey(kPersistedModelKey) as? [Int] {
@@ -48,12 +49,7 @@ class GameViewController: UIViewController {
         
         board.size = game.boardSize
         board.updateValuesWithModel(game.model, canSpawn: true)
-        
-        addSwipeGestureRecognizer(.Left,  gameaction: "swipeLeft")
-        addSwipeGestureRecognizer(.Right, gameaction: "swipeRight")
-        addSwipeGestureRecognizer(.Up,    gameaction: "swipeUp")
-        addSwipeGestureRecognizer(.Down,  gameaction: "swipeDown")
-        
+
         if let score = NSUserDefaults.standardUserDefaults().objectForKey("k2048CloneHighscore") as? Int {
             bestScore = score
         }
@@ -92,12 +88,6 @@ class GameViewController: UIViewController {
         return res
     }
     
-    private func addSwipeGestureRecognizer(direction: UISwipeGestureRecognizerDirection, gameaction: Selector) {
-        let gesture = UISwipeGestureRecognizer(target: game, action: gameaction)
-        gesture.direction = direction
-        self.view.addGestureRecognizer(gesture)
-    }
-    
     func newGameButtonTapped(sender: AnyObject) {
         resetGame(sender)
     }
@@ -125,6 +115,41 @@ class GameViewController: UIViewController {
     }
 }
 
+// MARK: Touch handling
+extension GameViewController {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if let touch = touches.first {
+            swipeStart = touch.locationInView(view)
+        }
+    }
+    
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        guard let swipeStart = swipeStart, touch = touches.first else { return }
+        
+        let treshold: CGFloat = 250.0
+        let loc = touch.locationInView(view)
+        let diff = CGPoint(x: loc.x - swipeStart.x, y: loc.y - swipeStart.y)
+        
+        func evaluateDirection(a: CGFloat, _ b: CGFloat, _ sensitivity: CGFloat) -> Bool {
+            let delta = sensitivity * max(abs(b)/(abs(a)+abs(b)), 0.05)
+            return sensitivity >= 0 ? a > delta : a < delta
+        }
+        
+        if diff.x > 0 && evaluateDirection(diff.x, diff.y, treshold) {
+            game.swipeRight()
+        } else if diff.x < 0 && evaluateDirection(diff.x, diff.y, -treshold) {
+            game.swipeLeft()
+        } else if diff.y > 0 && evaluateDirection(diff.y, diff.x, treshold) {
+            game.swipeDown()
+        } else if diff.y < 0 && evaluateDirection(diff.y, diff.x, -treshold) {
+            game.swipeUp()
+        }
+        
+        self.swipeStart = loc
+    }
+}
+
+// MARK: External keyboard handling
 extension GameViewController {
     override func canBecomeFirstResponder() -> Bool {
         return true
@@ -213,7 +238,7 @@ extension GameViewController: Game2048Delegate {
         view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .CenterX, relatedBy: .Equal, toItem: board, attribute: .CenterX, multiplier: 1, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .CenterY, relatedBy: .Equal, toItem: board, attribute: .CenterY, multiplier: 1, constant: 0))
         
-        UIView.animateWithDuration(0.2, animations: { _ in
+        UIView.animateWithDuration(0.2, animations: {
             messageButton.alpha = 1
         })
         
