@@ -198,6 +198,9 @@ extension GameViewController: Game2048Delegate {
     
     func game2048ScoreChanged(game: Game2048, score: Int) {
         updateScoreLabel()
+        if score > 0 {
+            displayScoreChangeNotification("+ \(score)")
+        }
     }
     
     func game2048TileMerged(game: Game2048, from: CGPoint, to: CGPoint) {
@@ -221,6 +224,23 @@ extension GameViewController: Game2048Delegate {
             })
         }
         presentedMessages.removeAll()
+    }
+    
+    private func displayScoreChangeNotification(text: String) {
+        let label = UILabel(frame: scoreLabel.frame)
+        label.text = text
+        label.textAlignment = .Center
+        label.textColor = UIColor.whiteColor()
+        label.font = scoreLabel.font
+        scoreLabel.superview!.addSubview(label)
+        UIView.animateWithDuration(0.8, animations: {
+            label.alpha = 0
+            var rect = label.frame
+            rect.origin.y += 50
+            label.frame = rect
+            }) { _ in
+                label.removeFromSuperview()
+        }
     }
     
     private func displayMessage(title: String, subtitle: String, action: Selector) {
