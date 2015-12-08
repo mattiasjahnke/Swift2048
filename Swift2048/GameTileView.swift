@@ -86,7 +86,7 @@ extension UIColor {
         var cString = hex.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
         
         if (cString.hasPrefix("0X")) {
-            cString = cString.substringFromIndex(advance(cString.startIndex, 2))
+            cString = cString.substringFromIndex(cString.startIndex.advancedBy(2))
         }
         
         if (cString.characters.count != 6) {
