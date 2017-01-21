@@ -22,16 +22,16 @@ class GameViewController: UIViewController {
     @IBOutlet weak var resetButton: UIButton!
     @IBOutlet weak var autoRunButton: UIButton!
     
-    private let game: Game2048
-    private var bestScore = 0
-    private var autoTimer: NSTimer?
-    private var presentedMessages = [UIButton]()
-    private var swipeStart: CGPoint?
-    private var lastMove = 0  // TODO: Implement a more elegant solution
+    fileprivate let game: Game2048
+    fileprivate var bestScore = 0
+    fileprivate var autoTimer: Timer?
+    fileprivate var presentedMessages = [UIButton]()
+    fileprivate var swipeStart: CGPoint?
+    fileprivate var lastMove = 0  // TODO: Implement a more elegant solution
     
     required init?(coder aDecoder: NSCoder) {
-        if let persisted = NSUserDefaults.standardUserDefaults().objectForKey(kPersistedModelKey) as? [Int] {
-            game = Game2048(gameModel: Matrix(grid: persisted))
+        if let persisted = UserDefaults.standard.object(forKey: kPersistedModelKey) as? [Int] {
+            game = Game2048(gameModel: persisted)
         } else {
             game = Game2048()
         }
@@ -39,7 +39,7 @@ class GameViewController: UIViewController {
         super.init(coder: aDecoder)
     }
     
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return true
     }
     
@@ -51,14 +51,14 @@ class GameViewController: UIViewController {
         board.size = game.boardSize
         board.updateValuesWithModel(game.model, canSpawn: true)
 
-        if let score = NSUserDefaults.standardUserDefaults().objectForKey("k2048CloneHighscore") as? Int {
+        if let score = UserDefaults.standard.object(forKey: "k2048CloneHighscore") as? Int {
             bestScore = score
         }
         
         updateScoreLabel()
     }
     
-    @IBAction func toggleAutoRun(sender: AnyObject) {
+    @IBAction func toggleAutoRun(_ sender: AnyObject) {
         if let timer = autoTimer {
             timer.invalidate()
             autoTimer = nil
@@ -67,87 +67,87 @@ class GameViewController: UIViewController {
         }
     }
     
-    @IBAction func resetGame(sender: AnyObject) {
+    @IBAction func resetGame(_ sender: AnyObject) {
         dismissMessages()
         game.reset()
     }
     
-    private func updateScoreLabel() {
+    fileprivate func updateScoreLabel() {
         if (game.score > bestScore) {
             bestScore = game.score
-            NSUserDefaults.standardUserDefaults().setObject(bestScore, forKey: "k2048CloneHighscore")
-            NSUserDefaults.standardUserDefaults().synchronize()
+            UserDefaults.standard.set(bestScore, forKey: "k2048CloneHighscore")
+            UserDefaults.standard.synchronize()
         }
         
         scoreLabel.attributedText = attributedText("Score", value: "\(game.score)")
         bestLabel.attributedText = attributedText("Best", value: "\(bestScore)")
     }
     
-    private func attributedText(title: String, value: String) -> NSAttributedString {
+    fileprivate func attributedText(_ title: String, value: String) -> NSAttributedString {
         let res = NSMutableAttributedString(string: title, attributes: [NSForegroundColorAttributeName : UIColor(red: 238.0/255.0, green: 228.0/255.0, blue: 214.0/255.0, alpha: 1)])
-        res.appendAttributedString(NSAttributedString(string: "\n\(value)", attributes: [NSForegroundColorAttributeName : UIColor(white: 1, alpha: 1)]))
+        res.append(NSAttributedString(string: "\n\(value)", attributes: [NSForegroundColorAttributeName : UIColor(white: 1, alpha: 1)]))
         return res
     }
     
-    func newGameButtonTapped(sender: AnyObject) {
+    func newGameButtonTapped(_ sender: AnyObject) {
         resetGame(sender)
     }
     
-    func continuePlayingButtonTapped(sender: AnyObject) {
+    func continuePlayingButtonTapped(_ sender: AnyObject) {
         dismissMessages()
     }
     
     func autoMove() {
-        if autoTimer == nil || autoTimer!.valid == false {
-            autoTimer = NSTimer.scheduledTimerWithTimeInterval(0.001, target: self, selector: "autoMove", userInfo: nil, repeats: true)
+        if autoTimer == nil || autoTimer!.isValid == false {
+            autoTimer = Timer.scheduledTimer(timeInterval: 0.001, target: self, selector: #selector(GameViewController.autoMove), userInfo: nil, repeats: true)
         }
         switch(arc4random_uniform(4)) {
-        case 0:
-            game.swipeDown()
-        case 1:
-            game.swipeLeft()
-        case 2:
-            game.swipeRight()
-        case 3:
-            game.swipeUp()
-        default:
-            break
+        case 0: shortUp()
+        case 1: shortDown()
+        case 2: shortRight()
+        case 3: shortLeft()
+        default: break
         }
     }
+    
+    func shortUp() { game.swipe(.y(.decrease)) }
+    func shortDown() { game.swipe(.y(.increase)) }
+    func shortLeft() { game.swipe(.x(.decrease)) }
+    func shortRight() { game.swipe(.x(.increase)) }
 }
 
 // MARK: Touch handling
 extension GameViewController {
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
-            swipeStart = touch.locationInView(view)
+            swipeStart = touch.location(in: view)
             lastMove = 0
         }
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        guard let swipeStart = swipeStart, touch = touches.first else { return }
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let swipeStart = swipeStart, let touch = touches.first else { return }
         
         let treshold: CGFloat = 250.0
-        let loc = touch.locationInView(view)
+        let loc = touch.location(in: view)
         let diff = CGPoint(x: loc.x - swipeStart.x, y: loc.y - swipeStart.y)
         
-        func evaluateDirection(a: CGFloat, _ b: CGFloat, _ sensitivity: CGFloat) -> Bool {
+        func evaluateDirection(_ a: CGFloat, _ b: CGFloat, _ sensitivity: CGFloat) -> Bool {
             let delta = sensitivity * max(abs(b)/(abs(a)+abs(b)), 0.05)
             return sensitivity >= 0 ? a > delta : a < delta
         }
         
         if diff.x > 0 && evaluateDirection(diff.x, diff.y, treshold) && lastMove != 1 {
-            game.swipeRight()
+            shortRight()
             lastMove = 1
         } else if diff.x < 0 && evaluateDirection(diff.x, diff.y, -treshold) && lastMove != 2 {
-            game.swipeLeft()
+            shortLeft()
             lastMove = 2
         } else if diff.y > 0 && evaluateDirection(diff.y, diff.x, treshold) && lastMove != 3 {
-            game.swipeDown()
+            shortDown()
             lastMove = 3
         } else if diff.y < 0 && evaluateDirection(diff.y, diff.x, -treshold) && lastMove != 4 {
-            game.swipeUp()
+            shortUp()
             lastMove = 4
         }
         
@@ -157,67 +157,63 @@ extension GameViewController {
 
 // MARK: External keyboard handling
 extension GameViewController {
-    override func canBecomeFirstResponder() -> Bool {
+    override var canBecomeFirstResponder : Bool {
         return true
     }
     
     override var keyCommands : [UIKeyCommand]? {
         get {
             return [
-                UIKeyCommand(input: UIKeyInputUpArrow, modifierFlags: UIKeyModifierFlags(rawValue: 0), action: Selector("shortUp")),
-                UIKeyCommand(input: UIKeyInputDownArrow, modifierFlags: UIKeyModifierFlags(rawValue: 0), action: Selector("shortDown")),
-                UIKeyCommand(input: UIKeyInputLeftArrow, modifierFlags: UIKeyModifierFlags(rawValue: 0), action: Selector("shortLeft")),
-                UIKeyCommand(input: UIKeyInputRightArrow, modifierFlags: UIKeyModifierFlags(rawValue: 0), action: Selector("shortRight")),
-                UIKeyCommand(input: " ", modifierFlags: UIKeyModifierFlags(rawValue: 0), action: Selector("shortReset"))]
+                UIKeyCommand(input: UIKeyInputUpArrow, modifierFlags: [], action: #selector(GameViewController.shortUp)),
+                UIKeyCommand(input: UIKeyInputDownArrow, modifierFlags: [], action: #selector(GameViewController.shortDown)),
+                UIKeyCommand(input: UIKeyInputLeftArrow, modifierFlags: [], action: #selector(GameViewController.shortLeft)),
+                UIKeyCommand(input: UIKeyInputRightArrow, modifierFlags: [], action: #selector(GameViewController.shortRight)),
+                UIKeyCommand(input: " ", modifierFlags: [], action: #selector(GameViewController.shortReset))]
         }
     }
     
-    func shortUp() { game.swipeUp() }
-    func shortDown() { game.swipeDown() }
-    func shortLeft() { game.swipeLeft() }
-    func shortRight() { game.swipeRight() }
     func shortReset() { game.reset() }
 }
 
 extension GameViewController: Game2048Delegate {
-    func game2048DidProcessMove(game: Game2048) {
+    func game2048DidProcessMove(_ game: Game2048) {
         board.updateValuesWithModel(game.model, canSpawn: false)
         board.animateTiles()
         
-        NSUserDefaults.standardUserDefaults().setObject(game.model.grid, forKey: kPersistedModelKey)
-        NSUserDefaults.standardUserDefaults().synchronize()
+        UserDefaults.standard.set(game.model, forKey: kPersistedModelKey)
+        UserDefaults.standard.synchronize()
     }
     
-    func game2048GameOver(game: Game2048) {
-        self.displayMessage("Game over!", subtitle: "Tap to try again", action: "newGameButtonTapped:")
+    func game2048GameOver(_ game: Game2048) {
+        self.displayMessage("Game over!", subtitle: "Tap to try again", action: #selector(GameViewController.newGameButtonTapped(_:)))
     }
     
-    func game2048Reached2048(game: Game2048) {
-        self.displayMessage("You win!", subtitle: "Tap to continue playing", action: "continuePlayingButtonTapped:")
+    func game2048Reached2048(_ game: Game2048) {
+        self.displayMessage("You win!", subtitle: "Tap to continue playing", action: #selector(GameViewController.continuePlayingButtonTapped(_:)))
     }
     
-    func game2048ScoreChanged(game: Game2048, score: Int) {
+    func game2048ScoreChanged(_ game: Game2048, score: Int) {
         updateScoreLabel()
         if score > 0 {
             displayScoreChangeNotification("+ \(score)")
         }
     }
     
-    func game2048TileMerged(game: Game2048, from: CGPoint, to: CGPoint) {
-        board.moveAndRemoveTileFromPosition(from, to: to)
+    func game2048TileMerged(_ game: Game2048, from: CGPoint, to: CGPoint) {
+        board.moveAndRemoveTile(from: from.boardPosition, to: to.boardPosition)
     }
     
-    func game2048TileSpawnedAtPoint(game: Game2048, point: CGPoint) {
+    func game2048TileSpawnedAtPoint(_ game: Game2048, point: CGPoint) {
         board.updateValuesWithModel(game.model, canSpawn: true)
     }
     
-    func game2048TileMoved(game: Game2048, from: CGPoint, to: CGPoint) {
-        board.moveTileFromPosition(from, to: to)
+    func game2048TileMoved(_ game: Game2048, from: CGPoint, to: CGPoint) {
+        board.moveTile(from: from.boardPosition, to: to.boardPosition)
     }
     
-    private func dismissMessages() {
+    func dismissMessages() {
         for message in presentedMessages {
-            UIView.animateWithDuration(0.1, animations: { _ in
+            UIView.animate(withDuration: 0.1, animations: { _ in
                 message.alpha = 0
                 }, completion: { _ in
                     message.removeFromSuperview()
@@ -226,51 +222,55 @@ extension GameViewController: Game2048Delegate {
         presentedMessages.removeAll()
     }
     
-    private func displayScoreChangeNotification(text: String) {
+    private func displayScoreChangeNotification(_ text: String) {
         let label = UILabel(frame: scoreLabel.frame)
         label.text = text
-        label.textAlignment = .Center
-        label.textColor = UIColor.whiteColor()
+        label.textAlignment = .center
+        label.textColor = UIColor.white
         label.font = scoreLabel.font
         scoreLabel.superview!.addSubview(label)
-        UIView.animateWithDuration(0.8, animations: {
+        UIView.animate(withDuration: 0.8, animations: {
             label.alpha = 0
             var rect = label.frame
             rect.origin.y += 50
             label.frame = rect
-            }) { _ in
+            }, completion: { _ in
                 label.removeFromSuperview()
-        }
+        }) 
     }
     
-    private func displayMessage(title: String, subtitle: String, action: Selector) {
-        let messageButton = UIButton(type: .Custom)
+    private func displayMessage(_ title: String, subtitle: String, action: Selector) {
+        let messageButton = UIButton(type: .custom)
         
         presentedMessages.append(messageButton)
         
         messageButton.translatesAutoresizingMaskIntoConstraints = false
         messageButton.backgroundColor = UIColor(white: 1, alpha: 0.5)
-        messageButton.titleLabel!.font = UIFont.boldSystemFontOfSize(36)
-        messageButton.addTarget(self, action: action, forControlEvents: .TouchUpInside)
+        messageButton.titleLabel!.font = UIFont.boldSystemFont(ofSize: 36)
+        messageButton.addTarget(self, action: action, for: .touchUpInside)
         
-        let str = NSMutableAttributedString(string: "\(title)\n", attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(36)])
-        str.appendAttributedString(NSAttributedString(string: subtitle, attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(16), NSForegroundColorAttributeName : UIColor(white: 0, alpha: 0.3)]))
-        messageButton.setAttributedTitle(str, forState: .Normal)
+        let str = NSMutableAttributedString(string: "\(title)\n", attributes: [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 36)])
+        str.append(NSAttributedString(string: subtitle, attributes: [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 16), NSForegroundColorAttributeName : UIColor(white: 0, alpha: 0.3)]))
+        messageButton.setAttributedTitle(str, for: UIControlState())
         messageButton.alpha = 0
         view.addSubview(messageButton)
         
-        view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .Width, relatedBy: .Equal, toItem: board, attribute: .Width, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .Height, relatedBy: .Equal, toItem: board, attribute: .Height, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .CenterX, relatedBy: .Equal, toItem: board, attribute: .CenterX, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .CenterY, relatedBy: .Equal, toItem: board, attribute: .CenterY, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .width, relatedBy: .equal, toItem: board, attribute: .width, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .height, relatedBy: .equal, toItem: board, attribute: .height, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .centerX, relatedBy: .equal, toItem: board, attribute: .centerX, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .centerY, relatedBy: .equal, toItem: board, attribute: .centerY, multiplier: 1, constant: 0))
         
-        UIView.animateWithDuration(0.2, animations: {
-            messageButton.alpha = 1
-        })
+        UIView.animate(withDuration: 0.2) { messageButton.alpha = 1 }
         
         if autoTimer != nil {
             autoTimer!.invalidate()
             autoTimer = nil
         }
+    }
+}
+
+extension CGPoint {
+    var boardPosition: BoardPosition {
+        return (x: Int(self.x), y: Int(self.y))
     }
 }

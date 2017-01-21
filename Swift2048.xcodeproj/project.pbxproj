@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CD0450421B7B911B00C5D7B0 /* default-color.json in Resources */ = {isa = PBXBuildFile; fileRef = CD0450411B7B911B00C5D7B0 /* default-color.json */; };
+		CD7010991E33AC5900EA9912 /* ArrayUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7010981E33AC5900EA9912 /* ArrayUtilities.swift */; };
 		CD7C2F871B7B8F7000A56AA1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7C2F861B7B8F7000A56AA1 /* AppDelegate.swift */; };
 		CD7C2F8C1B7B8F7000A56AA1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7C2F8A1B7B8F7000A56AA1 /* Main.storyboard */; };
 		CD7C2F8E1B7B8F7000A56AA1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD7C2F8D1B7B8F7000A56AA1 /* Assets.xcassets */; };
@@ -20,8 +21,9 @@
 
 /* Begin PBXFileReference section */
 		CD0450411B7B911B00C5D7B0 /* default-color.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "default-color.json"; sourceTree = "<group>"; };
+		CD7010981E33AC5900EA9912 /* ArrayUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayUtilities.swift; sourceTree = "<group>"; };
 		CD7C2F831B7B8F7000A56AA1 /* Swift2048.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swift2048.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CD7C2F861B7B8F7000A56AA1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		CD7C2F861B7B8F7000A56AA1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Swift2048/AppDelegate.swift; sourceTree = "<group>"; };
 		CD7C2F8B1B7B8F7000A56AA1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CD7C2F8D1B7B8F7000A56AA1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CD7C2F901B7B8F7000A56AA1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 			isa = PBXGroup;
 			children = (
 				CD7C2F851B7B8F7000A56AA1 /* Swift2048 */,
+				CD7C2F861B7B8F7000A56AA1 /* AppDelegate.swift */,
 				CD7C2F841B7B8F7000A56AA1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -82,7 +85,6 @@
 			isa = PBXGroup;
 			children = (
 				CD7C2F981B7B8F8300A56AA1 /* Classes */,
-				CD7C2F861B7B8F7000A56AA1 /* AppDelegate.swift */,
 				CD04503F1B7B90D100C5D7B0 /* Resources */,
 				CD0450401B7B90DF00C5D7B0 /* Other */,
 			);
@@ -92,6 +94,7 @@
 		CD7C2F981B7B8F8300A56AA1 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				CD7010981E33AC5900EA9912 /* ArrayUtilities.swift */,
 				CD7C2F9E1B7B8F9A00A56AA1 /* Game */,
 				CD7C2F991B7B8F8900A56AA1 /* Views */,
 				CD7C2FA11B7B8FB700A56AA1 /* ViewControllers */,
@@ -155,6 +158,8 @@
 				TargetAttributes = {
 					CD7C2F821B7B8F7000A56AA1 = {
 						CreatedOnToolsVersion = 7.0;
+						DevelopmentTeam = G576H7YVGT;
+						LastSwiftMigration = 0820;
 					};
 				};
 			};
@@ -195,6 +200,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD7010991E33AC5900EA9912 /* ArrayUtilities.swift in Sources */,
 				CD7C2F9D1B7B8F9300A56AA1 /* GameTileView.swift in Sources */,
 				CD7C2FA01B7B8FA600A56AA1 /* Game2048.swift in Sources */,
 				CD7C2F871B7B8F7000A56AA1 /* AppDelegate.swift in Sources */,
@@ -312,10 +318,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = G576H7YVGT;
 				INFOPLIST_FILE = Swift2048/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = se.nearedge.Swift2048;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -323,10 +331,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = G576H7YVGT;
 				INFOPLIST_FILE = Swift2048/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = se.nearedge.Swift2048;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
