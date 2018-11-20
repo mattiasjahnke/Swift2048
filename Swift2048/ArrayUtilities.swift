@@ -27,6 +27,6 @@ extension Array {
 
 extension Array where Element : Equatable {
     func indecies(of value: Element) -> [(x: Int, y: Int)] {
-        return self.enumerated().flatMap { $0.element == value ? coord(at: $0.offset) : nil }
+        return self.enumerated().compactMap { $0.element == value ? coord(at: $0.offset) : nil }
     }
 }

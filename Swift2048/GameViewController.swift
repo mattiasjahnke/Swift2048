@@ -84,20 +84,20 @@ class GameViewController: UIViewController {
     }
     
     fileprivate func attributedText(_ title: String, value: String) -> NSAttributedString {
-        let res = NSMutableAttributedString(string: title, attributes: [NSForegroundColorAttributeName : UIColor(red: 238.0/255.0, green: 228.0/255.0, blue: 214.0/255.0, alpha: 1)])
-        res.append(NSAttributedString(string: "\n\(value)", attributes: [NSForegroundColorAttributeName : UIColor(white: 1, alpha: 1)]))
+        let res = NSMutableAttributedString(string: title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor) : UIColor(red: 238.0/255.0, green: 228.0/255.0, blue: 214.0/255.0, alpha: 1)]))
+        res.append(NSAttributedString(string: "\n\(value)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor) : UIColor(white: 1, alpha: 1)])))
         return res
     }
     
-    func newGameButtonTapped(_ sender: AnyObject) {
+    @objc func newGameButtonTapped(_ sender: AnyObject) {
         resetGame(sender)
     }
     
-    func continuePlayingButtonTapped(_ sender: AnyObject) {
+    @objc func continuePlayingButtonTapped(_ sender: AnyObject) {
         dismissMessages()
     }
     
-    func autoMove() {
+    @objc func autoMove() {
         if autoTimer == nil || autoTimer!.isValid == false {
             autoTimer = Timer.scheduledTimer(timeInterval: 0.001, target: self, selector: #selector(GameViewController.autoMove), userInfo: nil, repeats: true)
         }
@@ -110,10 +110,10 @@ class GameViewController: UIViewController {
         }
     }
     
-    func shortUp() { game.swipe(.y(.decrease)) }
-    func shortDown() { game.swipe(.y(.increase)) }
-    func shortLeft() { game.swipe(.x(.decrease)) }
-    func shortRight() { game.swipe(.x(.increase)) }
+    @objc func shortUp() { game.swipe(.y(.decrease)) }
+    @objc func shortDown() { game.swipe(.y(.increase)) }
+    @objc func shortLeft() { game.swipe(.x(.decrease)) }
+    @objc func shortRight() { game.swipe(.x(.increase)) }
 }
 
 // MARK: Touch handling
@@ -164,15 +164,15 @@ extension GameViewController {
     override var keyCommands : [UIKeyCommand]? {
         get {
             return [
-                UIKeyCommand(input: UIKeyInputUpArrow, modifierFlags: [], action: #selector(GameViewController.shortUp)),
-                UIKeyCommand(input: UIKeyInputDownArrow, modifierFlags: [], action: #selector(GameViewController.shortDown)),
-                UIKeyCommand(input: UIKeyInputLeftArrow, modifierFlags: [], action: #selector(GameViewController.shortLeft)),
-                UIKeyCommand(input: UIKeyInputRightArrow, modifierFlags: [], action: #selector(GameViewController.shortRight)),
+                UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(GameViewController.shortUp)),
+                UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(GameViewController.shortDown)),
+                UIKeyCommand(input: UIKeyCommand.inputLeftArrow, modifierFlags: [], action: #selector(GameViewController.shortLeft)),
+                UIKeyCommand(input: UIKeyCommand.inputRightArrow, modifierFlags: [], action: #selector(GameViewController.shortRight)),
                 UIKeyCommand(input: " ", modifierFlags: [], action: #selector(GameViewController.shortReset))]
         }
     }
     
-    func shortReset() { game.reset() }
+    @objc func shortReset() { game.reset() }
 }
 
 extension GameViewController: Game2048Delegate {
@@ -213,7 +213,7 @@ extension GameViewController: Game2048Delegate {
     
     func dismissMessages() {
         for message in presentedMessages {
-            UIView.animate(withDuration: 0.1, animations: { _ in
+            UIView.animate(withDuration: 0.1, animations: { 
                 message.alpha = 0
                 }, completion: { _ in
                     message.removeFromSuperview()
@@ -249,9 +249,9 @@ extension GameViewController: Game2048Delegate {
         messageButton.titleLabel!.font = UIFont.boldSystemFont(ofSize: 36)
         messageButton.addTarget(self, action: action, for: .touchUpInside)
         
-        let str = NSMutableAttributedString(string: "\(title)\n", attributes: [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 36)])
-        str.append(NSAttributedString(string: subtitle, attributes: [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 16), NSForegroundColorAttributeName : UIColor(white: 0, alpha: 0.3)]))
-        messageButton.setAttributedTitle(str, for: UIControlState())
+        let str = NSMutableAttributedString(string: "\(title)\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font) : UIFont.boldSystemFont(ofSize: 36)]))
+        str.append(NSAttributedString(string: subtitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font) : UIFont.boldSystemFont(ofSize: 16), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor) : UIColor(white: 0, alpha: 0.3)])))
+        messageButton.setAttributedTitle(str, for: UIControl.State())
         messageButton.alpha = 0
         view.addSubview(messageButton)
         
@@ -273,4 +273,15 @@ extension CGPoint {
     var boardPosition: BoardPosition {
         return (x: Int(self.x), y: Int(self.y))
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

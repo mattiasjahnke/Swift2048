@@ -63,8 +63,8 @@ class GameTileView: UIView {
         valueLabel.backgroundColor = UIColor(white: 0.5, alpha: 0.2)
         
         self.addSubview(valueLabel)
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-5-[valueLabel]-5-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["valueLabel" : valueLabel]))
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-5-[valueLabel]-5-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["valueLabel" : valueLabel]))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-5-[valueLabel]-5-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["valueLabel" : valueLabel]))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-5-[valueLabel]-5-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["valueLabel" : valueLabel]))
     }
     
     fileprivate func colorForType(_ value: String, key: String) -> UIColor {
@@ -89,7 +89,7 @@ extension UIColor {
             cString = cString.substring(from: cString.characters.index(cString.startIndex, offsetBy: 2))
         }
         
-        if (cString.characters.count != 6) {
+        if (cString.count != 6) {
             return UIColor.gray
         }
         
