@@ -84,8 +84,12 @@ class GameViewController: UIViewController {
     }
     
     fileprivate func attributedText(_ title: String, value: String) -> NSAttributedString {
-        let res = NSMutableAttributedString(string: title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor) : UIColor(red: 238.0/255.0, green: 228.0/255.0, blue: 214.0/255.0, alpha: 1)]))
-        res.append(NSAttributedString(string: "\n\(value)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor) : UIColor(white: 1, alpha: 1)])))
+        let res = NSMutableAttributedString(string: title, attributes: [
+            .foregroundColor : UIColor(red: 238.0/255.0, green: 228.0/255.0, blue: 214.0/255.0, alpha: 1)
+            ])
+        res.append(NSAttributedString(string: "\n\(value)", attributes: [
+            .foregroundColor : UIColor(white: 1, alpha: 1)
+            ]))
         return res
     }
     
@@ -185,11 +189,15 @@ extension GameViewController: Game2048Delegate {
     }
     
     func game2048GameOver(_ game: Game2048) {
-        self.displayMessage("Game over!", subtitle: "Tap to try again", action: #selector(GameViewController.newGameButtonTapped(_:)))
+        self.displayMessage("Game over!",
+                            subtitle: "Tap to try again",
+                            action: #selector(GameViewController.newGameButtonTapped(_:)))
     }
     
     func game2048Reached2048(_ game: Game2048) {
-        self.displayMessage("You win!", subtitle: "Tap to continue playing", action: #selector(GameViewController.continuePlayingButtonTapped(_:)))
+        self.displayMessage("You win!",
+                            subtitle: "Tap to continue playing",
+                            action: #selector(GameViewController.continuePlayingButtonTapped(_:)))
     }
     
     func game2048ScoreChanged(_ game: Game2048, score: Int) {
@@ -249,16 +257,20 @@ extension GameViewController: Game2048Delegate {
         messageButton.titleLabel!.font = UIFont.boldSystemFont(ofSize: 36)
         messageButton.addTarget(self, action: action, for: .touchUpInside)
         
-        let str = NSMutableAttributedString(string: "\(title)\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font) : UIFont.boldSystemFont(ofSize: 36)]))
-        str.append(NSAttributedString(string: subtitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font) : UIFont.boldSystemFont(ofSize: 16), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor) : UIColor(white: 0, alpha: 0.3)])))
+        let str = NSMutableAttributedString(string: "\(title)\n", attributes: [.font: UIFont.boldSystemFont(ofSize: 36)])
+        str.append(NSAttributedString(string: subtitle, attributes: [
+            .font : UIFont.boldSystemFont(ofSize: 16),
+            .foregroundColor : UIColor(white: 0, alpha: 0.3)
+            ]))
+
         messageButton.setAttributedTitle(str, for: UIControl.State())
         messageButton.alpha = 0
         view.addSubview(messageButton)
         
-        view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .width, relatedBy: .equal, toItem: board, attribute: .width, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .height, relatedBy: .equal, toItem: board, attribute: .height, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .centerX, relatedBy: .equal, toItem: board, attribute: .centerX, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: messageButton, attribute: .centerY, relatedBy: .equal, toItem: board, attribute: .centerY, multiplier: 1, constant: 0))
+        messageButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1).isActive = true
+        messageButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1).isActive = true
+        messageButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        messageButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
         UIView.animate(withDuration: 0.2) { messageButton.alpha = 1 }
         
@@ -273,15 +285,4 @@ extension CGPoint {
     var boardPosition: BoardPosition {
         return (x: Int(self.x), y: Int(self.y))
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
 }

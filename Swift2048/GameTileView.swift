@@ -37,8 +37,8 @@ class GameTileView: UIView {
         }
     }
     var colorScheme: ColorScheme?
-    
     var valueLabel = UILabel()
+    private var isSetup = false
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -51,6 +51,8 @@ class GameTileView: UIView {
     }
     
     fileprivate func setup() {
+        guard !isSetup else { return }
+        isSetup = true
         alpha = 0
         
         valueLabel = UILabel()
@@ -86,7 +88,7 @@ extension UIColor {
         var cString = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         
         if (cString.hasPrefix("0X")) {
-            cString = cString.substring(from: cString.characters.index(cString.startIndex, offsetBy: 2))
+            cString = String(cString[cString.index(cString.startIndex, offsetBy: 2)..<cString.endIndex])
         }
         
         if (cString.count != 6) {
