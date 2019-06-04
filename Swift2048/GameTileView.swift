@@ -37,8 +37,8 @@ class GameTileView: UIView {
         }
     }
     var colorScheme: ColorScheme?
-    
     var valueLabel = UILabel()
+    private var isSetup = false
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -51,6 +51,8 @@ class GameTileView: UIView {
     }
     
     fileprivate func setup() {
+        guard !isSetup else { return }
+        isSetup = true
         alpha = 0
         
         valueLabel = UILabel()
@@ -63,8 +65,8 @@ class GameTileView: UIView {
         valueLabel.backgroundColor = UIColor(white: 0.5, alpha: 0.2)
         
         self.addSubview(valueLabel)
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-5-[valueLabel]-5-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["valueLabel" : valueLabel]))
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-5-[valueLabel]-5-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["valueLabel" : valueLabel]))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-5-[valueLabel]-5-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["valueLabel" : valueLabel]))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-5-[valueLabel]-5-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["valueLabel" : valueLabel]))
     }
     
     fileprivate func colorForType(_ value: String, key: String) -> UIColor {
@@ -86,10 +88,10 @@ extension UIColor {
         var cString = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         
         if (cString.hasPrefix("0X")) {
-            cString = cString.substring(from: cString.characters.index(cString.startIndex, offsetBy: 2))
+            cString = String(cString[cString.index(cString.startIndex, offsetBy: 2)..<cString.endIndex])
         }
         
-        if (cString.characters.count != 6) {
+        if (cString.count != 6) {
             return UIColor.gray
         }
         

@@ -44,10 +44,10 @@ class GameBoardView: UIView {
         tile.cornerRadius = 5
         tile.transform = CGAffineTransform(scaleX: 0.1, y: 0.1).concatenating(CGAffineTransform(rotationAngle: 3.14))
         
-        UIView.animate(withDuration: 0.3, animations: { _ in
+        UIView.animate(withDuration: 0.3) {
             tile.alpha = 1
             tile.transform = CGAffineTransform.identity
-        }) 
+        }
         
         return tile
     }
@@ -60,12 +60,12 @@ class GameBoardView: UIView {
         if let fromTile = tile(at: from), let toTile = tile(at: to) {
             fromTile.destroy = true
             moveTile(from: from, to: to)
-            UIView.animate(withDuration: 0.1, animations: { _ in
+            UIView.animate(withDuration: 0.1, animations: { 
                 toTile.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
                 }, completion: { _ in
-                    UIView.animate(withDuration: 0.1, animations: { _ in
+                    UIView.animate(withDuration: 0.1) {
                         toTile.transform = CGAffineTransform.identity
-                    })
+                    }
             })
         }
     }
@@ -73,7 +73,7 @@ class GameBoardView: UIView {
     func animateTiles() {
         var destroyed = [GameTileView]()
         for tile in tiles {
-            UIView.animate(withDuration: 0.1, animations: { _ in
+            UIView.animate(withDuration: 0.1, animations: { 
                 let dest = self.frame(at: tile.position)
                 tile.bounds = CGRect(x: 0, y: 0, width: dest.width, height: dest.height)
                 tile.layer.position = CGPoint(x: dest.origin.x + dest.width / 2, y: dest.origin.y + dest.height / 2)
