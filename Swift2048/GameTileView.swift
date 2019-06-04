@@ -62,11 +62,12 @@ class GameTileView: UIView {
         valueLabel.adjustsFontSizeToFitWidth = true
         valueLabel.textAlignment = .center
         valueLabel.clipsToBounds = true
+        valueLabel.baselineAdjustment = .alignCenters
         valueLabel.backgroundColor = UIColor(white: 0.5, alpha: 0.2)
         
         self.addSubview(valueLabel)
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-5-[valueLabel]-5-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["valueLabel" : valueLabel]))
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-5-[valueLabel]-5-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["valueLabel" : valueLabel]))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-p-[valueLabel]-p-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: ["p": 5], views: ["valueLabel" : valueLabel]))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-p-[valueLabel]-p-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: ["p": 5], views: ["valueLabel" : valueLabel]))
     }
     
     fileprivate func colorForType(_ value: String, key: String) -> UIColor {
